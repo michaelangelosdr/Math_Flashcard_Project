@@ -27,13 +27,31 @@ public class MathManager : MonoBehaviour {
 	private int b;
 	private int CorrectAnswer;
 	public int Player_answer;
+	//bool OnesHasvalue = false;
 
 	private Math_function _func;
 
 	// Use this for initialization
-	void Start () {
-		a = AssignNumberToText (Upper_Number_Text);
-		b = AssignNumberToText (Lower_Number_Text);
+	public void Initialize (Math_function function, Difficulty dif) {
+		int floor= 0, ceiling = 1;
+
+		if (dif == Difficulty.EASY) {
+			floor = 0;
+			ceiling = 10;
+		} else if (dif == Difficulty.NORMAL) {
+			floor = 5;
+			ceiling = 20;
+		} else if (dif == Difficulty.HARD) {
+			floor = 20;
+			ceiling = 60;
+		} else if (dif == Difficulty.EXPERT) {
+			floor = 10;
+			ceiling = 99;
+		}
+
+		a = AssignNumberToText (Upper_Number_Text,floor,ceiling);
+		b = AssignNumberToText (Lower_Number_Text,floor,ceiling);
+		Player_answer = 0;
 		ApplySign (Math_function.ADDITION);
 	}
 	
@@ -45,7 +63,16 @@ public class MathManager : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.R)) {
-			Start ();
+			Initialize (Math_function.ADDITION, Difficulty.HARD);
+		}
+		if (Input.GetKeyDown (KeyCode.E)) {
+			Initialize (Math_function.ADDITION, Difficulty.EASY);
+		}
+		if (Input.GetKeyDown (KeyCode.N)) {
+			Initialize (Math_function.ADDITION, Difficulty.NORMAL);
+		}
+		if (Input.GetKeyDown (KeyCode.G)) {
+			Initialize (Math_function.ADDITION, Difficulty.EXPERT);
 		}
 
 	}
@@ -73,6 +100,18 @@ public class MathManager : MonoBehaviour {
 		}
 	}
 
+	public void InputHandle(int val)
+	{
+		if (Player_answer == 0) {
+			Player_answer += val;
+		} else if (Player_answer > 0 && Player_answer <10) {
+			Player_answer *= 10 + val;
+		}
+		
+
+		Answer.text = Player_answer.ToString ();
+	}
+
 
 	public void ApplySign (Math_function _function)
 	{
@@ -90,10 +129,10 @@ public class MathManager : MonoBehaviour {
 		_func = _function;
 	}
 
-	public int AssignNumberToText(Text _text,int val = 0)
+	public int AssignNumberToText(Text _text,int rangefloor, int rangeceiling,int val = 0)
 	{
 		if (val == 0) {
-			val = Random.Range (0, 10);
+			val = Random.Range (rangefloor, rangeceiling);
 		}
 		_text.text = val.ToString ();
 		return val;
